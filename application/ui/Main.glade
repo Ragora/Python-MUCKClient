@@ -172,7 +172,6 @@ Line Seven</property>
                     </child>
                   </object>
                 </child>
-                <accelerator key="h" signal="activate"/>
               </object>
             </child>
           </object>
