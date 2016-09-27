@@ -323,8 +323,9 @@ class Formatter(object):
                 handler = self.ansi_handlers[ansi_numeric]
 
                 if handler is not None:
-                    print("*** ANSI warning: Found known ANSI format code %u, but is it not implemented." % ansi_numeric)
                     handler(current_format)
+                else:
+                    print("*** ANSI warning: Found known ANSI format code %u, but is it not implemented." % ansi_numeric)
 
         # Once we hit the end, we grab any remaining text and create a formatter entry for it
         if current_index != len(input_text) - 1:
