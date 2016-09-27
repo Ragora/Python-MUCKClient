@@ -84,154 +84,154 @@ class Formatter(object):
 
         format_state["underline"] = True
 
-    def _handle_bold_off(format):
+    def _handle_bold_off(format_state):
         """
             Handler for ANSI code 22.
         """
 
         format_state["bold"] = False
 
-    def _handle_italics_off(format):
+    def _handle_italics_off(format_state):
         """
             Handler for ANSI code 23.
         """
 
         format_state["italics"] = False
 
-    def _handle_underline_off(format):
+    def _handle_underline_off(format_state):
         """
             Handler for ANSI code 24.
         """
 
         format_state["underline"] = False
 
-    def _handle_underline_off(format):
+    def _handle_underline_off(format_state):
         """
             Handler for ANSI code 24.
         """
 
         format_state["underline"] = False
 
-    def _handle_foreground_black(format):
+    def _handle_foreground_black(format_state):
         """
             Handler for ANSI code 30.
         """
 
         format_state["foreground"] = "black"
 
-    def _handle_foreground_red(format):
+    def _handle_foreground_red(format_state):
         """
             Handler for ANSI code 31.
         """
 
         format_state["foreground"] = "red"
 
-    def _handle_foreground_green(format):
+    def _handle_foreground_green(format_state):
         """
             Handler for ANSI code 32.
         """
 
         format_state["foreground"] = "green"
 
-    def _handle_foreground_yellow(format):
+    def _handle_foreground_yellow(format_state):
         """
             Handler for ANSI code 33.
         """
 
         format_state["foreground"] = "yellow"
 
-    def _handle_foreground_blue(format):
+    def _handle_foreground_blue(format_state):
         """
             Handler for ANSI code 34.
         """
 
         format_state["foreground"] = "blue"
 
-    def _handle_foreground_magenta(format):
+    def _handle_foreground_magenta(format_state):
         """
             Handler for ANSI code 35.
         """
 
         format_state["foreground"] = "magenta"
 
-    def _handle_foreground_cyan(format):
+    def _handle_foreground_cyan(format_state):
         """
             Handler for ANSI code 36.
         """
 
         format_state["foreground"] = "cyan"
 
-    def _handle_foreground_white(format):
+    def _handle_foreground_white(format_state):
         """
             Handler for ANSI code 37.
         """
 
         format_state["foreground"] = "white"
 
-    def _handle_foreground_reset(format):
+    def _handle_foreground_reset(format_state):
         """
             Handler for ANSI code 39.
         """
 
         format_state["foreground"] = None
 
-    def _handle_background_black(format):
+    def _handle_background_black(format_state):
         """
             Handler for ANSI code 40.
         """
 
         format_state["background"] = "black"
 
-    def _handle_background_red(format):
+    def _handle_background_red(format_state):
         """
             Handler for ANSI code 41.
         """
 
         format_state["background"] = "red"
 
-    def _handle_background_green(format):
+    def _handle_background_green(format_state):
         """
             Handler for ANSI code 42.
         """
 
         format_state["background"] = "green"
 
-    def _handle_background_yellow(format):
+    def _handle_background_yellow(format_state):
         """
             Handler for ANSI code 43.
         """
 
         format_state["background"] = "yellow"
 
-    def _handle_background_blue(format):
+    def _handle_background_blue(format_state):
         """
             Handler for ANSI code 44.
         """
 
         format_state["background"] = "blue"
 
-    def _handle_background_magenta(format):
+    def _handle_background_magenta(format_state):
         """
             Handler for ANSI code 45.
         """
 
         format_state["background"] = "magenta"
 
-    def _handle_background_cyan(format):
+    def _handle_background_cyan(format_state):
         """
             Handler for ANSI code 46.
         """
 
         format_state["background"] = "cyan"
 
-    def _handle_background_white(format):
+    def _handle_background_white(format_state):
         """
             Handler for ANSI code 47.
         """
 
         format_state["background"] = "white"
 
-    def _handle_background_reset(format):
+    def _handle_background_reset(format_state):
         """
             Handler for ANSI code 49.
         """
@@ -302,14 +302,17 @@ class Formatter(object):
             coloring = self.default_coloring
 
         # We process the input text looking for all sequences that look like this:
-        ansi_regex = re.compile("\x27[0-9]+m")
+        ansi_regex = re.compile("\x1b\\[([0-9]+\\;)?[0-9]+m")
+        beginning_regex = re.compile("\x1b\\[([0-9]+\\;)?")
 
         for match in re.finditer(ansi_regex, input_text):
             start_index = match.start()
             end_index = match.end()
 
             # When we find a good match, we only want the numeric code
-            ansi_numeric = int(match.group(0).rstrip("m").lstrip("\x27"))
+            # FIXME: What does the ##; mean?
+            ansi_numeric = match.group(0).rstrip("m")
+            ansi_numeric = int(re.sub(beginning_regex, "", ansi_numeric))
 
             # When we have a valid ANSI sequence, we push back the old format state and buffer
             if ansi_numeric in self.ansi_handlers:
@@ -326,10 +329,11 @@ class Formatter(object):
                     handler(current_format)
                 else:
                     print("*** ANSI warning: Found known ANSI format code %u, but is it not implemented." % ansi_numeric)
+            else:
+                print("*** ANSI warning: Found unknown ANSI format code %u." % ansi_numeric)
 
         # Once we hit the end, we grab any remaining text and create a formatter entry for it
-        if current_index != len(input_text) - 1:
-            segments.append((input_text[current_index:], current_format))
+        segments.append((input_text[current_index:], current_format))
 
         # Foreach segment, build a pango text attribute block
         result = ""
