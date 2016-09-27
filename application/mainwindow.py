@@ -19,6 +19,7 @@ from aboutwindow import AboutWindow
 from newaliaswindow import NewAliasWindow
 from newlogwindow import NewLogWindow
 from connection import Connection
+from savetextbufferwindow import SaveTextBufferWindow
 
 class MainWindow(object):
     """
@@ -106,6 +107,10 @@ class MainWindow(object):
                 window = NewLogWindow(self.application, self.application.selected_alias)
             else:
                 self.application.alias_states[self.application.selected_alias]["logfile"] = None
+
+    def save_text_buffer(self, element):
+        if self.application.selected_alias is not None:
+            window = SaveTextBufferWindow(self.application, self.application.selected_alias)
 
     def key_pressed(self, element, event):
         """

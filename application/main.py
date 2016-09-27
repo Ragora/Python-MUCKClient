@@ -12,7 +12,6 @@ try:
     import pygtk
     pygtk.require("2.0")
 except:
-    print("Wut")
     pass
 
 from gi.repository import Gtk, GLib
@@ -64,7 +63,6 @@ class Application(object):
 
                 for alias in aliases:
                     self.add_alias(alias, aliases[alias]["address"], aliases[alias]["password"])
-
         except OSError:
             print("Failed to load config.")
 

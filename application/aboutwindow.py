@@ -30,4 +30,4 @@ class AboutWindow(object):
             Signal that's called when the user submits a response to the about dialog.
         """
 
-        self.window.hide()
+        self.window.destroy()
