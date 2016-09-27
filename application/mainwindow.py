@@ -1,4 +1,7 @@
 """
+    mainwindow.py
+
+    Python programming for the primary MUCK window.
 """
 
 import json
@@ -103,6 +106,17 @@ class MainWindow(object):
                 window = NewLogWindow(self.application, self.application.selected_alias)
             else:
                 self.application.alias_states[self.application.selected_alias]["logfile"] = None
+
+    def key_pressed(self, element, event):
+        """
+            Signal that's called when the user presses any key on the input text box.
+        """
+
+        state, code = event.get_keycode()
+
+        # We only want to send the current input when enter is struck
+        if code == 36:
+            self.send_text(self.entry_input)
 
     def show_about_window(self, element):
         """

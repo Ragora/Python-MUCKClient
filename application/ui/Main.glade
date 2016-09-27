@@ -145,8 +145,8 @@ Line Seven</property>
                     </child>
                   </object>
                 </child>
-                <accelerator key="f" signal="popup-menu" modifiers="GDK_CONTROL_MASK"/>
                 <accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                <accelerator key="f" signal="popup-menu" modifiers="GDK_CONTROL_MASK"/>
               </object>
             </child>
             <child>
@@ -212,6 +212,7 @@ Line Seven</property>
                 <property name="margin_top">1</property>
                 <property name="hexpand">True</property>
                 <signal name="editing-done" handler="send_text" swapped="no"/>
+                <signal name="key-press-event" handler="key_pressed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">0</property>
