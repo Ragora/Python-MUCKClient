@@ -16,6 +16,7 @@ except:
 
 from gi.repository import Gtk, GLib
 
+import ansi
 from mainwindow import MainWindow
 
 class Application(object):
@@ -90,6 +91,10 @@ class Application(object):
                         for index, line in enumerate(new_lines):
                             # Escape incoming data so we don't break the markup
                             line = cgi.escape(line)
+
+                            # Perform ANSI formatting
+                            ansi_formatter = ansi.Formatter()
+                            line = ansi_formatter.process_formatting(line)
 
                             # TODO: Configurable formatters
                             line = line.replace("Ragora", "<span foreground=\"blue\">Ragora</span>")
