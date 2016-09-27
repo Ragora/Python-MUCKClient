@@ -1,7 +1,7 @@
 """
     aboutwindow.py
 
-    
+    Python programming for the about window.
 """
 
 try:
@@ -13,11 +13,21 @@ except:
 from gi.repository import Gtk
 
 class AboutWindow(object):
+    window = None
+
     def __init__(self, application):
         builder = Gtk.Builder()
         builder.add_from_file("ui/About.glade")
 
-        window = builder.get_object("AboutWindow")
+        self.window = builder.get_object("AboutWindow")
 
         builder.connect_signals(self)
-        window.set_visible(True)
+        self.window.set_visible(True)
+        response = self.window.run()
+
+    def user_response(self, element, event):
+        """
+            Signal that's called when the user submits a response to the about dialog.
+        """
+
+        self.window.hide()
