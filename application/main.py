@@ -39,7 +39,7 @@ class Application(object):
         Runtime relevant state data about each alias.
     """
 
-    url_pattern = re.compile("http\://.+")
+    url_pattern = re.compile("https?\://([A-z]|\.|[0-9]|-|/)+")
     """
         A regular expression representing any URL. This is used to format URL's in our text output to be
         actual clickable links.
@@ -75,7 +75,6 @@ class Application(object):
                 self.config = config
         except OSError:
             print("Failed to load config.")
-
 
         Gtk.main()
 
