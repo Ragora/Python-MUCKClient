@@ -20,6 +20,7 @@ import pango
 
 import ansi
 from mainwindow import MainWindow
+import markup
 
 class Application(object):
     """
@@ -115,8 +116,14 @@ class Application(object):
 
                             for trigger_data in self.config["triggers"].values():
                                 trigger_text = trigger_data["text"]
-                                trigger_color = trigger_data["color"]
-                                line = line.replace(trigger_text, "<span foreground=\"%s\">%s</span>" % (trigger_color, trigger_text))
+                                trigger_foreround = trigger_data["foreground"]
+                                trigger_background = trigger_data["background"]
+
+                                generator = markup.Markup()
+                                generator.foreground = trigger_foreground
+                                generator.backgrund = trigger_background
+                                generator.text = trigger_text
+                                line = line.replace(trigger_text, generator.generate_markup())
 
                             # FIXME: Can we validate with the damn URL's?
                             try:
@@ -129,8 +136,11 @@ class Application(object):
                             # FIXME: Try things that look like URL's, ie: www.*
                             for match in re.finditer(self.url_pattern, line):
                                 match_text = match.group(0)
+                                generator = markup.Markup()
+                                generator.text = match_text
+                                generator.link = match_text
 
-                                line = line.replace(match_text, "<a href=\"%s\">%s</a>" % (match_text, match_text))
+                                line = line.replace(match_text, generator.generate_markup())
 
                             output_lines.append(line)
                         # Feed the modified data back to the connection
