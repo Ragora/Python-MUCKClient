@@ -116,13 +116,42 @@ class Application(object):
 
                             for trigger_data in self.config["triggers"].values():
                                 trigger_text = trigger_data["text"]
-                                trigger_foreround = trigger_data["foreground"]
-                                trigger_background = trigger_data["background"]
+
+                                trigger_foreground = None
+                                trigger_background = None
+                                trigger_bold = False
+                                trigger_italic = False
+                                trigger_strikethrough = False
+                                trigger_underline = False
+
+                                if "foreground" in trigger_data:
+                                    trigger_foreground = trigger_data["foreground"]
+
+                                if "background" in trigger_data:
+                                    trigger_background = trigger_data["background"]
+
+                                if "bold" in trigger_data:
+                                    trigger_bold = trigger_data["bold"]
+
+                                if "italic" in trigger_data:
+                                    trigger_italic = trigger_data["italic"]
+
+                                if "strikethrough" in trigger_data:
+                                    trigger_strikethrough = trigger_data["strikethrough"]
+
+                                if "underline" in trigger_data:
+                                    trigger_underline = trigger_data["underline"]
 
                                 generator = markup.Markup()
                                 generator.foreground = trigger_foreground
                                 generator.backgrund = trigger_background
                                 generator.text = trigger_text
+                                generator.bold = trigger_bold
+                                generator.italic = trigger_italic
+                                generator.underline = trigger_underline
+                                generator.strikethrough = trigger_strikethrough
+                                generator.underline = trigger_underline
+
                                 line = line.replace(trigger_text, generator.generate_markup())
 
                             # FIXME: Can we validate with the damn URL's?
