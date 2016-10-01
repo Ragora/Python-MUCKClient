@@ -15,6 +15,8 @@ except:
     pass
 
 from gi.repository import Gtk, GLib
+import glib
+import pango
 
 import ansi
 from mainwindow import MainWindow
@@ -101,19 +103,27 @@ class Application(object):
                             with open(self.alias_states[alias]["logfile"], "a") as handle:
                                 handle.write("\n".join(new_lines))
 
+                        output_lines = []
                         for index, line in enumerate(new_lines):
                             # Escape incoming data so we don't break the markup
-                            line = cgi.escape(line)
+                            old_line = cgi.escape(line)
+                            line = str(old_line)
 
                             # Perform ANSI formatting
                             ansi_formatter = ansi.Formatter()
                             line = ansi_formatter.process_formatting(line)
 
-                            # TODO: Configurable formatters
                             for trigger_data in self.config["triggers"].values():
                                 trigger_text = trigger_data["text"]
                                 trigger_color = trigger_data["color"]
                                 line = line.replace(trigger_text, "<span foreground=\"%s\">%s</span>" % (trigger_color, trigger_text))
+
+                            # FIXME: Can we validate with the damn URL's?
+                            try:
+                                pango.parse_markup(line)
+                            except glib.GError as e:
+                                print("An internal error has occurred. Failed to validate markup '%s': %s" % (line, e))
+                                line = old_line
 
                             # Replace things that look like URL's with the href tags
                             # FIXME: Try things that look like URL's, ie: www.*
@@ -122,9 +132,9 @@ class Application(object):
 
                                 line = line.replace(match_text, "<a href=\"%s\">%s</a>" % (match_text, match_text))
 
-                            new_lines[index] = line
+                            output_lines.append(line)
                         # Feed the modified data back to the connection
-                        self.alias_states[alias]["connection"].acknowledge_lines(new_lines)
+                        self.alias_states[alias]["connection"].acknowledge_lines(output_lines)
 
                         if self.selected_alias == alias:
                             modified_current_alias = True
