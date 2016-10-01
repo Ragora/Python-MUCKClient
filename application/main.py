@@ -71,8 +71,11 @@ class Application(object):
 
                 for alias_name in config["aliases"]:
                     self.add_alias(alias_name, config["aliases"][alias_name]["address"], config["aliases"][alias_name]["password"])
+
+                self.config = config
         except OSError:
             print("Failed to load config.")
+
 
         Gtk.main()
 
@@ -108,7 +111,10 @@ class Application(object):
                             line = ansi_formatter.process_formatting(line)
 
                             # TODO: Configurable formatters
-                            line = line.replace("Ragora", "<span foreground=\"blue\">Ragora</span>")
+                            for trigger_data in self.config["triggers"].values():
+                                trigger_text = trigger_data["text"]
+                                trigger_color = trigger_data["color"]
+                                line = line.replace(trigger_text, "<span foreground=\"%s\">%s</span>" % (trigger_color, trigger_text))
 
                             # Replace things that look like URL's with the href tags
                             # FIXME: Try things that look like URL's, ie: www.*
@@ -141,11 +147,6 @@ class Application(object):
             "connection": None,
             "icon": self.main_window.add_alias(name),
             "logfile": None,
-        }
-
-        self.config["aliases"][name] = {
-            "address": address,
-            "password": password,
         }
 
 if __name__ == "__main__":

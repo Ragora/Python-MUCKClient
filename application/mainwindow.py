@@ -36,6 +36,11 @@ class MainWindow(object):
         The text buffer used for the output.
     """
 
+    has_aliases = False
+    """
+        Whether or not we currently have aliases.
+    """
+
     def __init__(self, application):
         builder = Gtk.Builder()
         builder.add_from_file("ui/Main.glade")
@@ -89,14 +94,18 @@ class MainWindow(object):
 
             row.add(grid)
 
-        text.set_visible(True)
+            # If we just added a fresh character, clear the list box
+            if not self.has_aliases:
+                self.has_aliases = True
+                self.view_port_aliases.remove(self.alias_list)
+                self.alias_list = Gtk.ListBox()
+                self.alias_list.set_visible(True)
+                self.view_port_aliases.add(self.alias_list)
 
-        # If we just added a fresh character, clear the list box
-        if len(self.application.config["aliases"]) == 0:
-            self.view_port_aliases.remove(self.alias_list)
-            self.alias_list = Gtk.ListBox()
-            self.alias_list.set_visible(True)
-            self.view_port_aliases.add(self.alias_list)
+                # Rebind the select event
+                self.alias_list.connect("row-selected", self.alias_selected)
+
+        text.set_visible(True)
 
         self.alias_list.add(row)
         return icon
