@@ -55,7 +55,7 @@ Line Seven</property>
     <property name="window_position">center</property>
     <property name="default_width">640</property>
     <property name="default_height">240</property>
-    <property name="icon_name">face-monkey</property>
+    <property name="icon">logo.ico</property>
     <signal name="destroy" handler="close" swapped="no"/>
     <child>
       <object class="GtkGrid" id="GridWindowContent">
@@ -117,8 +117,8 @@ Line Seven</property>
                     </child>
                   </object>
                 </child>
-                <accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                 <accelerator key="f" signal="popup-menu" modifiers="GDK_CONTROL_MASK"/>
+                <accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
             </child>
             <child>
