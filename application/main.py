@@ -114,45 +114,50 @@ class Application(object):
                             ansi_formatter = ansi.Formatter()
                             line = ansi_formatter.process_formatting(line)
 
-                            for trigger_data in self.config["triggers"].values():
-                                trigger_text = trigger_data["text"]
+                            for trigger_name in self.config["triggers"]:
+                                trigger_data = self.config["triggers"][trigger_name]
 
-                                trigger_foreground = None
-                                trigger_background = None
-                                trigger_bold = False
-                                trigger_italic = False
-                                trigger_strikethrough = False
-                                trigger_underline = False
+                                try:
+                                    trigger_text = trigger_data["text"]
 
-                                if "foreground" in trigger_data:
-                                    trigger_foreground = trigger_data["foreground"]
+                                    trigger_foreground = None
+                                    trigger_background = None
+                                    trigger_bold = False
+                                    trigger_italic = False
+                                    trigger_strikethrough = False
+                                    trigger_underline = False
 
-                                if "background" in trigger_data:
-                                    trigger_background = trigger_data["background"]
+                                    if "foreground" in trigger_data:
+                                        trigger_foreground = trigger_data["foreground"]
 
-                                if "bold" in trigger_data:
-                                    trigger_bold = trigger_data["bold"]
+                                    if "background" in trigger_data:
+                                        trigger_background = trigger_data["background"]
 
-                                if "italic" in trigger_data:
-                                    trigger_italic = trigger_data["italic"]
+                                    if "bold" in trigger_data:
+                                        trigger_bold = trigger_data["bold"]
 
-                                if "strikethrough" in trigger_data:
-                                    trigger_strikethrough = trigger_data["strikethrough"]
+                                    if "italic" in trigger_data:
+                                        trigger_italic = trigger_data["italic"]
 
-                                if "underline" in trigger_data:
-                                    trigger_underline = trigger_data["underline"]
+                                    if "strikethrough" in trigger_data:
+                                        trigger_strikethrough = trigger_data["strikethrough"]
 
-                                generator = markup.Markup()
-                                generator.foreground = trigger_foreground
-                                generator.backgrund = trigger_background
-                                generator.text = trigger_text
-                                generator.bold = trigger_bold
-                                generator.italic = trigger_italic
-                                generator.underline = trigger_underline
-                                generator.strikethrough = trigger_strikethrough
-                                generator.underline = trigger_underline
+                                    if "underline" in trigger_data:
+                                        trigger_underline = trigger_data["underline"]
 
-                                line = line.replace(trigger_text, generator.generate_markup())
+                                    generator = markup.Markup()
+                                    generator.foreground = trigger_foreground
+                                    generator.backgrund = trigger_background
+                                    generator.text = trigger_text
+                                    generator.bold = trigger_bold
+                                    generator.italic = trigger_italic
+                                    generator.underline = trigger_underline
+                                    generator.strikethrough = trigger_strikethrough
+                                    generator.underline = trigger_underline
+
+                                    line = line.replace(trigger_text, generator.generate_markup())
+                                except KeyError as e:
+                                    print("An internal error has occurred. Failed to run trigger '%s': %s" % (trigger_name, e))
 
                             # FIXME: Can we validate with the damn URL's?
                             try:
@@ -172,6 +177,7 @@ class Application(object):
                                 line = line.replace(match_text, generator.generate_markup())
 
                             output_lines.append(line)
+                            
                         # Feed the modified data back to the connection
                         self.alias_states[alias]["connection"].acknowledge_lines(output_lines)
 
