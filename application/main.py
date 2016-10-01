@@ -40,8 +40,15 @@ class Application(object):
     """
 
     url_pattern = re.compile("http\://.+")
+    """
+        A regular expression representing any URL. This is used to format URL's in our text output to be
+        actual clickable links.
+    """
 
     selected_alias = None
+    """
+        Thw name of the currently selected alias.
+    """
 
     def main(self):
         """
@@ -49,7 +56,7 @@ class Application(object):
             state and start up the GUI.
         """
 
-        self.aliases = {}
+        self.config = {"aliases": {}, "triggers": {}, "ansi": {}}
         self.alias_states = {}
         GLib.idle_add(self.update)
 
@@ -60,19 +67,23 @@ class Application(object):
             with open("config.txt", "r") as handle:
                 buffer = handle.read()
 
-                aliases = json.loads(buffer)
+                config = json.loads(buffer)
 
-                for alias in aliases:
-                    self.add_alias(alias, aliases[alias]["address"], aliases[alias]["password"])
+                for alias_name in config["aliases"]:
+                    self.add_alias(alias_name, config["aliases"][alias_name]["address"], config["aliases"][alias_name]["password"])
         except OSError:
             print("Failed to load config.")
 
         Gtk.main()
 
     def update(self):
+        """
+            Called to process our ongoing connections, receiving and processing any lines as necessary.
+        """
+
         modified_current_alias = False
 
-        for alias in self.aliases:
+        for alias in self.config["aliases"]:
             if alias != "No Aliases." and self.alias_states[alias]["connection"] is not None:
                 if self.alias_states[alias]["connection"].is_connected():
                     new_lines = self.alias_states[alias]["connection"].update()
@@ -115,6 +126,7 @@ class Application(object):
                 else:
                     self.alias_states[alias]["icon"].set_from_stock("gtk-dialog-error", 2)
 
+            # If there was new text data to display, attempt to scroll the window down
             if modified_current_alias is True:
                 # FIXME: Auto scroll to the bottom
                 self.main_window.label_output.set_markup(self.alias_states[self.selected_alias]["connection"].buffer)
@@ -131,7 +143,7 @@ class Application(object):
             "logfile": None,
         }
 
-        self.aliases[name] = {
+        self.config["aliases"][name] = {
             "address": address,
             "password": password,
         }

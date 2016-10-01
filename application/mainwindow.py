@@ -48,6 +48,7 @@ class MainWindow(object):
         self.alias_list = builder.get_object("ListBoxAliases")
         self.scroll_window = builder.get_object("ViewPortContent")
         self.logging_enable = builder.get_object("CheckItemLoggingEnable")
+        self.view_port_aliases = builder.get_object("ViewPortAliases")
 
         self.entry_input = builder.get_object("EntryInput")
 
@@ -59,6 +60,10 @@ class MainWindow(object):
         self.window.set_visible(True)
 
     def add_alias(self, name):
+        """
+            Adds an alias to be displayed on the alias list window.
+        """
+
         # Build the new row
         row = Gtk.ListBoxRow()
         row.set_visible(True)
@@ -85,6 +90,13 @@ class MainWindow(object):
             row.add(grid)
 
         text.set_visible(True)
+
+        # If we just added a fresh character, clear the list box
+        if len(self.application.config["aliases"]) == 0:
+            self.view_port_aliases.remove(self.alias_list)
+            self.alias_list = Gtk.ListBox()
+            self.alias_list.set_visible(True)
+            self.view_port_aliases.add(self.alias_list)
 
         self.alias_list.add(row)
         return icon
@@ -159,7 +171,7 @@ class MainWindow(object):
                 self.logging_enable.set_active(True)
 
             if self.application.alias_states[name]["connection"] is None or self.application.alias_states[name]["connection"].is_connected() is False:
-                self.application.alias_states[name]["connection"] = Connection(self.application.aliases[name]["address"])
+                self.application.alias_states[name]["connection"] = Connection(self.application.config["aliases"][name]["address"])
 
             self.label_output.set_markup(self.application.alias_states[name]["connection"].buffer)
             self.scroll_window.get_vadjustment().set_value(1.0)
@@ -179,7 +191,7 @@ class MainWindow(object):
             Signal that's called when the user clicks the X for the window or uses File->Quit.
         """
 
-        config_string = json.dumps(self.application.aliases, sort_keys=True, indent=4, separators=(',', ': '))
+        config_string = json.dumps(self.application.config, sort_keys=True, indent=4, separators=(',', ': '))
 
         with open("config.txt", "w") as handle:
             handle.write(config_string)
