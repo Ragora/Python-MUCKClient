@@ -206,3 +206,6 @@ class MainWindow(object):
             handle.write(config_string)
 
         Gtk.main_quit()
+
+    def window_focused(self, element):
+        self.entry_input.grab_focus()

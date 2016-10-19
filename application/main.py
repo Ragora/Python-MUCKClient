@@ -62,7 +62,8 @@ class Application(object):
             state and start up the GUI.
         """
 
-        self.config = {"aliases": {}, "triggers": {}, "ansi": {}}
+        empty_config = {"aliases": {}, "triggers": {}, "ansi": {}}
+        self.config = empty_config
         self.alias_states = {}
         GLib.idle_add(self.update)
 
@@ -81,6 +82,12 @@ class Application(object):
                 self.config = config
         except OSError:
             print("Failed to load config.")
+
+        # Once we have a config, ensure that our base level config objects exist
+        # FIXME: Probably should recurse this
+        for key in empty_config:
+            if key not in self.config:
+                self.config[key] = empty_config[key]
 
         Gtk.main()
 
@@ -202,6 +209,14 @@ class Application(object):
         return True
 
     def add_alias(self, name, address, password):
+        """
+            Adds a new alias to the MUCK client.
+        """
+        self.config["aliases"][name] = {
+            "address": address,
+            "name": name,
+        }
+
         self.alias_states[name] = {
             "connection": None,
             "icon": self.main_window.add_alias(name),
