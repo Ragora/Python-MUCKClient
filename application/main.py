@@ -80,7 +80,7 @@ class Application(object):
                     self.add_alias(alias_name, config["aliases"][alias_name]["address"], config["aliases"][alias_name]["password"])
 
                 self.config = config
-        except OSError:
+        except IOError:
             print("Failed to load config.")
 
         # Once we have a config, ensure that our base level config objects exist
@@ -215,6 +215,7 @@ class Application(object):
         self.config["aliases"][name] = {
             "address": address,
             "name": name,
+            "password": password
         }
 
         self.alias_states[name] = {
