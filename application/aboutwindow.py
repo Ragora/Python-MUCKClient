@@ -13,6 +13,10 @@ except:
 from gi.repository import Gtk
 
 class AboutWindow(object):
+    """
+        Class representing the about window.
+    """
+
     window = None
 
     def __init__(self, application):

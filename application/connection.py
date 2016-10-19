@@ -34,6 +34,10 @@ class Connection(object):
             self.buffer += "<b>Failed to connect: %s</b>" % error
             self.socket = None
             return
+        except socket.error as error:
+            self.buffer += "<b>Failed to connect: %s</b>" % error
+            self.socket = None
+            return
 
         self.socket.setblocking(False)
 
@@ -66,7 +70,7 @@ class Connection(object):
 
         # FIXME: Configurable
         self.send("QUIT")
-        
+
         self.socket.close()
         self.socket = None
 

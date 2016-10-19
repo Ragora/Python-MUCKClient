@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 """
     main.py
 """
@@ -7,6 +9,7 @@ import os
 import sys
 import cgi
 import json
+import time
 
 try:
     import pygtk
@@ -177,7 +180,7 @@ class Application(object):
                                 line = line.replace(match_text, generator.generate_markup())
 
                             output_lines.append(line)
-                            
+
                         # Feed the modified data back to the connection
                         self.alias_states[alias]["connection"].acknowledge_lines(output_lines)
 
@@ -194,6 +197,8 @@ class Application(object):
 
                 vertical.set_value(vertical.get_upper() - vertical.get_page_size())
 
+        # Don't eat your CPU alive
+        time.sleep(0.0005)
         return True
 
     def add_alias(self, name, address, password):

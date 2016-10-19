@@ -118,11 +118,11 @@ class MainWindow(object):
 
     def toggle_logging(self, element):
         """
-            Signal that's called when the user clicks the File->Logging Enable.
+            Signal that's called when the user clicks the Logging->Logging Enable option.
         """
         if self.application.selected_alias is not None:
             activated = element.get_active()
-            self.application.aliases[self.application.selected_alias]["logging"] = activated
+            self.application.alias_states[self.application.selected_alias]["logging"] = activated
 
             if activated is True:
                 window = NewLogWindow(self.application, self.application.selected_alias)
