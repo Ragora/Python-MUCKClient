@@ -207,5 +207,10 @@ class MainWindow(object):
 
         Gtk.main_quit()
 
-    def window_focused(self, element):
+    def window_focused(self, element, event):
+        """
+            Called when the window is focused to force focusing on the text input for ease of access.
+        """
+
         self.entry_input.grab_focus()
+        return False

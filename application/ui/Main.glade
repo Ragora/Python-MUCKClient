@@ -57,6 +57,7 @@ Line Seven</property>
     <property name="default_height">237</property>
     <property name="icon">logo.ico</property>
     <signal name="destroy" handler="close" swapped="no"/>
+    <signal name="focus-in-event" handler="window_focused" swapped="no"/>
     <child>
       <object class="GtkGrid" id="GridWindowContent">
         <property name="visible">True</property>
@@ -117,8 +118,8 @@ Line Seven</property>
                     </child>
                   </object>
                 </child>
-                <accelerator key="f" signal="popup-menu" modifiers="GDK_CONTROL_MASK"/>
                 <accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                <accelerator key="f" signal="popup-menu" modifiers="GDK_CONTROL_MASK"/>
               </object>
             </child>
             <child>
@@ -217,6 +218,7 @@ Line Seven</property>
                 <property name="has_focus">True</property>
                 <property name="is_focus">True</property>
                 <property name="can_default">True</property>
+                <property name="has_default">True</property>
                 <property name="margin_top">1</property>
                 <property name="hexpand">True</property>
                 <signal name="editing-done" handler="send_text" swapped="no"/>
@@ -240,11 +242,11 @@ Line Seven</property>
         <child>
           <object class="GtkPaned" id="PaneAliases">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="can_focus">False</property>
             <child>
               <object class="GtkScrolledWindow" id="ScrollWindowAliases">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can_focus">False</property>
                 <property name="hscrollbar_policy">never</property>
                 <property name="shadow_type">in</property>
                 <child>
@@ -288,6 +290,7 @@ Line Seven</property>
                         <property name="wrap">True</property>
                         <property name="wrap_mode">word-char</property>
                         <property name="selectable">True</property>
+                        <signal name="button-release-event" handler="window_focused" swapped="no"/>
                       </object>
                     </child>
                   </object>
